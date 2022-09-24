@@ -13,12 +13,14 @@ class LoginController extends Controller
         $credentials = $request->only('email','password');
 
         if(! Auth::attempt($credentials)){
-            return response()->json(['message' => 'Credenciales incorrectas','status' => 401]);
+            return response()->json(['message' => 'Credenciales incorrectas','code' => 407, 'error' => true]);
         }
 
         $accesToken = Auth::user()->createToken('guido123')->accessToken;
 
         return response()->json([
+            'error' => false,
+            'code' => 200,
             'user' => Auth::user(),
             'access_token' => $accesToken
         ],200);
@@ -28,7 +30,7 @@ class LoginController extends Controller
     public function all(Request $request){
         $users = User::all();
 
-        return response()->json(['data' => $users, 'status' => 200]);
+        return response()->json(['data' => $users, 'code' => 200]);
     }
 
     public function activar_admin(Request $request)
@@ -36,16 +38,14 @@ class LoginController extends Controller
         $user = User::find($request->id);
 
         if(!$user){
-            return response()->json(['message' => 'Usuario no encontrado','status' => 401]);
+            return response()->json(['message' => 'Usuario no encontrado','code' => 409]);
         }
 
         $user->tipo_usuario = User::ADMIN;
 
         $user->save();
 
-        return $user;
-        // $usuario = $user->activar_admin();
+        return response()->json(['error' => false, 'code' => 200, 'data' =>  $user]);
 
-        // return $usuario;
     }
 }

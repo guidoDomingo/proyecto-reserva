@@ -70,9 +70,9 @@ class Handler extends ExceptionHandler
         }else if ($e instanceof QueryException) {
             return $this->errorResponse(["message" => $e->getMessage(), "message_user" => "Error Sql"], HttpResponse::HTTP_FORBIDDEN);
         } else if ($e instanceof Token) {
-            return $this->errorResponse($e->getMessage(), HttpResponse::HTTP_UNAUTHORIZED);
+            return response()->json(['error' => true, 'message' => 'Usuario no autenticado','code' => 401],HttpResponse::HTTP_UNAUTHORIZED);
         } else if ($e instanceof AuthenticationException) {
-            return $this->errorResponse($e->getMessage(), HttpResponse::HTTP_UNAUTHORIZED);
+            return response()->json(['error' => true, 'message' => 'Usuario no auntenticado','code' => 401],HttpResponse::HTTP_UNAUTHORIZED);
         } else if ($e instanceof ValidationException) {
             $errors = $e->validator->errors()->getMessages();
             return $this->errorResponse($errors, HttpResponse::HTTP_UNPROCESSABLE_ENTITY);

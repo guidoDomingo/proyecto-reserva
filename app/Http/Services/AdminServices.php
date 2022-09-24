@@ -76,11 +76,11 @@ class AdminServices {
                 'updated_at' => Carbon::now()
              ]);
 
-             return response()->json(['error' => false, 'message' => 'Se genero las fechas y horas correctamente', 'status' => 200]);
+             return response()->json(['error' => false, 'message' => 'Se genero las fechas y horas correctamente', 'code' => 200]);
 
 
         }catch(Exception $e){
-            return response()->json(['error' => true, 'message' => $e, 'status' => 201]);
+            return response()->json(['error' => true, 'message' => $e, 'code' => 208]);
         }
     }
 
@@ -122,16 +122,16 @@ class AdminServices {
 
             if((strtotime($hora) <= strtotime($hora_actual)))
             {
-                return response()->json(['error' => true, 'message' => 'La hora está desfasado', 'status' => 201],201);
+                return response()->json(['error' => true, 'message' => 'La hora está desfasado', 'code' => 408],408);
             }else if((strtotime($fecha) < strtotime($fecha_actual))){
-                return response()->json(['error' => true, 'message' => 'La fecha está desfasado', 'status' => 201],201);
+                return response()->json(['error' => true, 'message' => 'La fecha está desfasado', 'code' => 408],408);
             }
 
             $reserva = DB::table('reservations')->where('user_id',$data['user_id'])->where('status',true)->first();
 
             if(!empty($reserva))
             {
-                return response()->json(['error' => true, 'message' => 'El usuario ya tiene reserva', 'status' => 201],201);
+                return response()->json(['error' => true, 'message' => 'El usuario ya tiene reserva', 'code' => 408],408);
             }
 
 
@@ -161,11 +161,11 @@ class AdminServices {
                     'user_id' => $data['user_id'],
                 ]);
 
-                return response()->json(['error' => false, 'message' => 'Se genero la reserva correctamente', 'status' => 200]);
+                return response()->json(['error' => false, 'message' => 'Se genero la reserva correctamente', 'code' => 200]);
             }
 
          }catch(Exception $e){
-            return response()->json(['error' => true, 'message' => $e, 'status' => 201],201);
+            return response()->json(['error' => true, 'message' => $e, 'code' => 207],207);
          }
     }
 
@@ -179,13 +179,13 @@ class AdminServices {
 
             $date_disponible = json_decode($result,true);
 
-            return  response()->json(['error' => false, 'message' => 'Lista de reserva generada', 'status' => 200, 'data' => $date_disponible]);
+            return  response()->json(['error' => false, 'message' => 'Lista de reserva generada', 'code' => 200, 'data' => $date_disponible]);
         }
 
-        return response()->json(['error' => true, 'message' => 'No hay datos', 'status' => 201]);
+        return response()->json(['error' => true, 'message' => 'No hay datos', 'code' => 208]);
 
       }catch(Exception $e){
-        return response()->json(['error' => true, 'message' => $e, 'status' => 201]);
+        return response()->json(['error' => true, 'message' => $e, 'code' => 208]);
       }
     }
 
@@ -216,11 +216,11 @@ class AdminServices {
             ]);
 
             if($insert){
-                return  response()->json(['error' => false, 'message' => 'Servicio insertado', 'status' => 200]);
+                return  response()->json(['error' => false, 'message' => 'Servicio insertado', 'code' => 200]);
             }
 
         }catch(Exception $e){
-            return response()->json(['error' => true, 'message' => $e, 'status' => 201]);
+            return response()->json(['error' => true, 'message' => $e, 'code' => 208]);
         }
     }
 
@@ -233,14 +233,15 @@ class AdminServices {
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => true, 'message' => 'campos requeridos'],401);
+            return response()->json(['error' => true, 'message' => 'campos requeridos', 'code' => 408],408);
         }
 
         $user_id = $data['user_id'];
 
         $reserva = Reservation::where('user_id',$user_id)->where('status',true)->with('servicios')->with('usuarios')->get();
 
-        return $reserva;
+        return  response()->json(['error' => false, 'message' => 'Servicio insertado', 'code' => 200, 'data' => $reserva]);
+
     }
 
     public function actualizar_status()
