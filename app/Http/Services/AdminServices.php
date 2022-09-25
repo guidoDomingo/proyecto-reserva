@@ -173,7 +173,7 @@ class AdminServices {
     {
       try{
 
-        $result = DB::table('available_date')->orderBy('created_at','desc')->where('status', 'true')->value('reservation_date');
+        $result = DB::table('available_date')->orderBy('created_at','desc')->where('status', true)->value('reservation_date');
 
         if($result){
 
