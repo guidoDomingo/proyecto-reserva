@@ -13,7 +13,8 @@ class Service extends Model
     protected $fillable = [
         'name',
         'price',
-        'user_id'
+        'user_id',
+        'image'
     ];
 
     public function reservas()

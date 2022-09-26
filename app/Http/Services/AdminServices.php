@@ -177,7 +177,39 @@ class AdminServices {
 
         if($result){
 
-            $date_disponible = json_decode($result,true);
+            $date_disponible = json_decode($result,false);
+            $datos1 = [];
+            $datos2 = [];
+
+            foreach($date_disponible as $key => $value){
+
+                if (!in_array($value->fecha, $datos1)) {
+
+                    array_push($datos1,$value->fecha);
+                }
+            }
+
+
+            //return $arreglo1;
+
+            foreach($datos1 as $key => $value){
+                $objeto = [
+                    "fecha" => '',
+                    "horarios" => [],
+                    "estado" => ""
+                ];
+                foreach($date_disponible as $key1 => $value1){
+                    if($value == $value1->fecha){
+                        $objeto['fecha'] = $value1->fecha;
+                        $objeto['estado'] = $value1->estado;
+                        array_push($objeto['horarios'], $value1->hora);
+                    }
+                }
+
+                array_push($datos2, $objeto);
+            }
+
+            return $datos2;
 
             return  response()->json(['error' => false, 'message' => 'Lista de reserva generada', 'code' => 200, 'data' => $date_disponible]);
         }
@@ -189,40 +221,6 @@ class AdminServices {
       }
     }
 
-    public function generate_services($request)
-    {
-        try{
-
-            $data = $request->all();
-
-            $validator = Validator::make($data, [
-                'name' => 'required',
-                'price' => 'required',
-                'user_id' => 'required'
-            ]);
-
-            if($validator->fails()){
-                return [
-                    "error" => true,
-                    "message" => "error de validación",
-                    "code" => 403
-                ];
-            }
-
-            $insert = DB::table('services')->insert([
-                'name' => $data['name'],
-                'price' => $data['price'],
-                'user_id' => $data['user_id'],
-            ]);
-
-            if($insert){
-                return  response()->json(['error' => false, 'message' => 'Servicio insertado', 'code' => 200]);
-            }
-
-        }catch(Exception $e){
-            return response()->json(['error' => true, 'message' => $e, 'code' => 208]);
-        }
-    }
 
     public function get_reserva_user($request)
     {
