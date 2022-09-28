@@ -5,6 +5,7 @@ use App\Http\Middleware\authReserva;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::prefix('/user')->group(function(){
+
     Route::post('/login', 'App\Http\Controllers\LoginController@login');
     Route::get('/all','App\Http\Controllers\LoginController@all')->middleware('auth:api');
     Route::get('/activar_admin/{id}','App\Http\Controllers\LoginController@activar_admin')->middleware('auth:api');
@@ -58,7 +60,7 @@ Route::get('test', function(){
             $updated = DB::table('reservations')->where('date_reservation', $value->date_reservation)->update(['status' => false]);
 
             array_push($datos,$value->date_reservation);
-        
+
         }else{
             array_push($datos1,$value->date_reservation);
         }

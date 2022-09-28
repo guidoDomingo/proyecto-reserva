@@ -209,9 +209,9 @@ class AdminServices {
                 array_push($datos2, $objeto);
             }
 
-            return $datos2;
+            //return $datos2;
 
-            return  response()->json(['error' => false, 'message' => 'Lista de reserva generada', 'code' => 200, 'data' => $date_disponible]);
+            return  response()->json(['error' => false, 'message' => 'Lista de reserva generada', 'code' => 200, 'data' => $datos2]);
         }
 
         return response()->json(['error' => true, 'message' => 'No hay datos', 'code' => 208]);
