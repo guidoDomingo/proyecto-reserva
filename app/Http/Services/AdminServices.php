@@ -93,8 +93,6 @@ class AdminServices {
             $validator = Validator::make($data, [
                 'hora' => 'required',
                 'fecha' => 'required',
-                'name' => 'required',
-                'status' => 'required',
                 'service_id' => 'required',
                 'user_id' => 'required',
             ]);
@@ -113,18 +111,15 @@ class AdminServices {
 
             $hora = Carbon::parse($request->hora)->format('H:i:s');
             $hora_actual = Carbon::now()->format('H:i:s');
-            $fecha = Carbon::parse($request->fecha)->format('d-m-Y');
+            $fecha_ = Carbon::parse($request->fecha)->format('Y-m-d');
 
-            $fecha_actual = Carbon::now()->format('d-m-Y');
-            //return $fecha_actual;
-            //return ['fecha' => strtotime($fecha), 'fecha_actual' => strtotime($fecha_actual) ];
-            //return strtotime($fecha) <= strtotime($fecha_actual);
+            $fecha = Carbon::parse($request->fecha.''.$request->hora)->format('d-m-Y H:i:s');
 
-            if((strtotime($hora) <= strtotime($hora_actual)))
-            {
-                return response()->json(['error' => true, 'message' => 'La hora está desfasado', 'code' => 408],408);
-            }else if((strtotime($fecha) < strtotime($fecha_actual))){
-                return response()->json(['error' => true, 'message' => 'La fecha está desfasado', 'code' => 408],408);
+            $fecha_actual = Carbon::now()->format('d-m-Y H:i:s');
+
+
+            if((strtotime($fecha) < strtotime($fecha_actual))){
+                return response()->json(['error' => true, 'message' => 'La fecha o la hora está desfasado', 'code' => 408],408);
             }
 
             $reserva = DB::table('reservations')->where('user_id',$data['user_id'])->where('status',true)->first();
@@ -138,10 +133,10 @@ class AdminServices {
 
             $result = DB::table('available_date')->orderBy('created_at','desc')->where('status', 'true')->value('reservation_date');
             $date_disponible = json_decode($result,true);
-            //return $date_disponible;
+           // return $date_disponible;
             foreach($date_disponible as $key => $value ){
 
-                if($date_disponible[$key]['hora'] == $hora){
+                if($date_disponible[$key]['fecha'] == $fecha_ && $date_disponible[$key]['hora'] == $hora){
                     $date_disponible[$key]['estado'] = false;
                 }
             }
@@ -154,9 +149,9 @@ class AdminServices {
                 $date_reserva = Carbon::parse($hora);
 
                 Reservation::create([
-                    'name' => $data['name'],
+                    'name' => 'Por default',
                     'date_reservation' => $date_reserva,
-                    'status' => $data['status'],
+                    'status' => true,
                     'service_id' => $data['service_id'],
                     'user_id' => $data['user_id'],
                 ]);
@@ -195,14 +190,15 @@ class AdminServices {
             foreach($datos1 as $key => $value){
                 $objeto = [
                     "fecha" => '',
-                    "horarios" => [],
-                    "estado" => ""
+                    "horarios" => []
                 ];
                 foreach($date_disponible as $key1 => $value1){
                     if($value == $value1->fecha){
                         $objeto['fecha'] = $value1->fecha;
-                        $objeto['estado'] = $value1->estado;
-                        array_push($objeto['horarios'], $value1->hora);
+
+                        if($value1->estado){
+                            array_push($objeto['horarios'], $value1->hora);
+                        }
                     }
                 }
 
@@ -238,7 +234,7 @@ class AdminServices {
 
         $reserva = Reservation::where('user_id',$user_id)->where('status',true)->with('servicios')->with('usuarios')->get();
 
-        return  response()->json(['error' => false, 'message' => 'Servicio insertado', 'code' => 200, 'data' => $reserva]);
+        return  response()->json(['error' => false, 'message' => 'Servicio reservados', 'code' => 200, 'data' => $reserva]);
 
     }
 
