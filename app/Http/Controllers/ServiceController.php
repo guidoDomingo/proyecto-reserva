@@ -43,7 +43,7 @@ class ServiceController extends Controller
         $data = $request->all();
 
         $path = $request->file('image')->store('');
-        $data['image'] = $path;
+        $data['image'] = '/'.$path;
         $service = Service::create($data);
 
         return  response()->json(['error' => false, 'message' => 'Servicio insertado', 'code' => 200, 'data' => $service ]);
