@@ -160,7 +160,7 @@ class AdminServices {
             }
 
          }catch(Exception $e){
-            return response()->json(['error' => true, 'message' => $e, 'code' => 207],207);
+            return response()->json(['error' => true, 'message' => $e->getMessage(), 'code' => 207],207);
          }
     }
 
