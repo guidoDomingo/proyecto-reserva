@@ -36,8 +36,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('/reservation')->group(function() {
         Route::post('/generate_available_date', 'App\Http\Controllers\AdminController@generate_available_date');
         Route::post('/generate_reservation', 'App\Http\Controllers\AdminController@generate_reservation');
-        Route::get('/get_reservation', 'App\Http\Controllers\AdminController@get_reservation');
+        Route::get('/get_reservation/{user_id}', 'App\Http\Controllers\AdminController@get_reservation');
         Route::post('/get_reserva_user', 'App\Http\Controllers\AdminController@get_reserva_user');
+        Route::get('/get_reservas', 'App\Http\Controllers\AdminController@get_reservas');
+        Route::post('/cancelar_reserva', 'App\Http\Controllers\AdminController@cancelar_reserva');
         Route::resource('/services','App\Http\Controllers\ServiceController');
     });
 });
@@ -53,10 +55,11 @@ Route::get('test', function(){
     $datos = [];
     $datos1 = [];
 
+
     foreach($fecha_reserva as $key => $value)
     {
-
-        if(strtotime($fecha_actual) >= strtotime($value->date_reservation))
+        $fecha = Carbon::parse($value->date_reservation)->format('Y-m-d H:i:s');
+        if(strtotime($fecha) <= strtotime($fecha_actual))
         {
             $updated = DB::table('reservations')->where('date_reservation', $value->date_reservation)->update(['status' => false]);
 

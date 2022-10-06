@@ -44,15 +44,16 @@ class ActualizarStatusReserva extends Command
         $datos = [];
         $datos1 = [];
 
+
         foreach($fecha_reserva as $key => $value)
         {
-
-            if(strtotime($fecha_actual) >= strtotime($value->date_reservation))
+            $fecha = Carbon::parse($value->date_reservation)->format('Y-m-d H:i:s');
+            if(strtotime($fecha) <= strtotime($fecha_actual))
             {
                 $updated = DB::table('reservations')->where('date_reservation', $value->date_reservation)->update(['status' => false]);
 
                 array_push($datos,$value->date_reservation);
-            
+
             }else{
                 array_push($datos1,$value->date_reservation);
             }

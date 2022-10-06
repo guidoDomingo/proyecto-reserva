@@ -33,4 +33,12 @@ class AdminController extends Controller
     {
        return $this->service->get_reserva_user($request);
     }
+    public function get_reservas(Request $request)
+    {
+       return $this->service->get_reservas($request);
+    }
+    public function cancelar_reserva(Request $request)
+    {
+       return $this->service->cancelar_reserva($request);
+    }
 }
