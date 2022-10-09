@@ -145,7 +145,7 @@ class AdminServices
 
 
 
-            $result = DB::table('available_date')->orderBy('created_at', 'desc')->where('status', 'true')->value('reservation_date');
+            $result = DB::table('available_date')->orderBy('created_at', 'desc')->where('status', true)->value('reservation_date');
             $date_disponible = json_decode($result, true);
 
             $contador = 0;
